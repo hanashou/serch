@@ -1,0 +1,48 @@
+def get_page(url):
+    try:
+        import urllib
+        return urllib.urlopen(url).read()
+    except:
+        return ""
+def get_next_target(page):
+    start_link = page.find('<a href=')
+    if start_link is -1:
+        return None , 0
+    start_quote = page.find("", start_link)
+    end_quote = page.find("", start_link +1)
+    url = page[start_quote +1:end_quote]
+    return url, end_quote
+
+def union(p,q):
+    for e in q:
+        if e not in p:
+            p.append(e)
+
+def get_all_links(page):
+    lines = []
+    while True:
+        url,endpos = get_next_target(page)
+        if url:
+            links.apprnd(url)
+            page = page[endpos:]
+        else:
+            break
+    return links
+
+def crawl_web(seed, max_depth):
+    # seed :一番最初の元となるページ（クローリングにおいて重要）
+    # clawed: クロールが終了したページ
+    # tocrawl:クロールするページ
+
+    tocraw = [seed]
+    crawled = []
+    next_depth =[]
+    depth = 0
+    while tocrawl and depth <= max_depth:
+        page = tocrawl.pop()
+        if page not in crawled:
+            union(next_depth, get_all_links(get_page(page)))
+        if not tocrawl:
+            tocrawl,next_depth = next_depth,[]
+            depth = depth + 1
+        return crawled
