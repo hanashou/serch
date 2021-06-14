@@ -1,1 +1,19 @@
+#引数のpageは、HTMLの文書を格納した文字列
+def get_next_target(page):
+    start_link = page.find('<a href=')#<a href="URL"としてあつかわれる
+    if start_link is None:#is Noneでも　==-1でもいい
+        return 0
+    start_quote = page.find("",start_link)
+    end_quete = page.find("",start_quote + 1)
+    url = page[start_quote+1:end_quete]
+    return url, end_quete
+
+def print_all_links(page):
+    while True:
+        url, endpos = get_next_target(page)
+        if url:
+            print (url)
+            page = page[endpos:]
+        else:
+            break
 
